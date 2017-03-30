@@ -1,0 +1,24 @@
+#cloud-config
+
+coreos:
+  units:
+  - name: ct-honeybee.service
+    command: start
+    content: |
+      [Unit]
+      Description=retrieves signed tree heads (STHs) from Certificate Transparency logs and uploads them to auditors
+      Requires=docker.service
+
+      [Service]
+      Type=oneshot
+      ExecStart=/usr/bin/docker run --rm tam7t/ct-honeybee:latest
+  - name: ct-honeybee.timer
+    command: start
+    content: |
+      [Unit]
+      Description=Run ct-honeybee.service every hour
+
+      [Timer]
+      OnBootSec=1min
+      OnUnitActiveSec=60min
+
